@@ -27,7 +27,7 @@ local function SendMessage(message,client)
 	timer.sleep(5000) response.delete(response)
 end
 
-local function Configuration(message,client)
+local function SetTextChannel(message,client)
 	-- Check if message has a valid URL
 	local link = message.content:sub(7)
 	if link:sub(1,29) ~= "https://discord.com/channels/" then
@@ -76,7 +76,7 @@ local function Chat(message,client) -- messageCreate event
 	if message.author.id ~= Config.OwnerID then return end
 
 	if message.content:sub(1,5):lower() == "chat " then SendMessage(message,client) end
-	if message.content:sub(1,6):lower() == "chatc " then Config(message,client) end
+	if message.content:sub(1,6):lower() == "chatc " then SetTextChannel(message,client) end
 end
 
 -------------------
