@@ -11,8 +11,9 @@ local timer = require("timer")
 local Cache = { Tweets = {}, Profiles = {} }
 local Fixes,FixesRef = {},{}
 
-local reactionNeeded,reactionUrl,reactionEmoji = true,{},"1306441268079104061"
+local reactionNeeded,reactionUrl = true,{}
 
+local emojis = {reaction="1306441268079104061",comments="1306441248474664991",repost="1306441284319449158",like="1306441277293989918"}
 local TimeTranslate = {[" day left"]=" dia restante",[" days left"]=" dias restantes",[" hour left"]=" hora restante",[" hours left"]=" horas restantes",[" minute left"]=" minuto restante",[" minutes left"]=" minutos restantes",[" second left"]=" segundo restante",[" seconds left"]="segundos restantes"}
 local LangCodes = {"af","ak","am","ar","as","az","be","bg","bn","br","bs","ca","cs","cy","da","de","el","en","eo","es","et","eu","fa","fi","fj","fo","fr","ga","gd","gl","gn","gu","ha","he","hi","hr","ht","hu","hy","ia","id","ie","ig","ik","is","it","iu","ja","jv","ka","kg","ki","kk","kl","km","kn","ko","ks","ku","ky","la","lb","lg","ln","lo","lt","lu","lv","mg","mk","ml","mn","mr","ms","mt","my","na","nb","nd","ne","nl","nn","no","nr","nv","ny","oc","om","or","os","pa","pl","ps","pt","qu","rm","rn","ro","ru","rw","sa","sc","sd","se","sg","si","sk","sl","sm","sn","so","sq","sr","ss","st","su","sv","sw","ta","te","tg","th","ti","tk","tl","tn","to","tr","ts","tt","ug","uk","ur","uz","ve","vi","vo","wa","wo","xh","yi","yo","za","zu"}
 local AltLangCodes = {["zh"]="zh-cn",["cn"]="zh-cn",["tw"]="zh-tw",["jp"]="ja",["kr"]="ko",["ua"]="uk",["gr"]="el"}
@@ -241,9 +242,9 @@ local function Tweet(message,link)
 
 	embed[1].title,embed[1].url = tweet.author.name,tweet.url
 
-	embed[1].description =	"<:comments:1306441248474664991>⠀"..FormatNumber(tweet.replies).."⠀⠀⠀⠀".. -- 💬
-							"<:repost:1306441284319449158>⠀"..FormatNumber(tweet.retweets).."⠀⠀⠀⠀".. -- 🔄
-							"<:like:1306441277293989918>⠀"..FormatNumber(tweet.likes) -- ❤️
+	embed[1].description =	"<:comments:"..emojis.comments..">⠀"..FormatNumber(tweet.replies).."⠀⠀⠀⠀".. -- 💬
+							"<:repost:"..emojis.repost..">⠀"..FormatNumber(tweet.retweets).."⠀⠀⠀⠀".. -- 🔄
+							"<:like:"..emojis.like..">⠀"..FormatNumber(tweet.likes) -- ❤️
 
 	if tweet.poll then
 		local poll = ""
@@ -304,9 +305,9 @@ local function Tweet(message,link)
 		embed[2].title,embed[2].url = "Menção ao tweet de "..tweet.quote.author.name.." - @"..tweet.quote.author.screen_name,tweet.quote.url
 
 		--[[
-		embed[2].description =	"<:comments:1306441248474664991>⠀"..FormatNumber(tweet.quote.replies).."⠀⠀⠀⠀".. -- 💬
-								"<:retweet:1306441284319449158>⠀"..FormatNumber(tweet.quote.retweets).."⠀⠀⠀⠀".. -- 🔄
-								"<:like:1306441277293989918>⠀"..FormatNumber(tweet.quote.likes) -- ❤️
+		embed[2].description =	"<:comments:"..emojis.comments..">⠀"..FormatNumber(tweet.quote.replies).."⠀⠀⠀⠀".. -- 💬
+								"<:repost:"..emojis.repost..">⠀"..FormatNumber(tweet.quote.retweets).."⠀⠀⠀⠀".. -- 🔄
+								"<:like:"..emojis.like..">⠀"..FormatNumber(tweet.quote.likes) -- ❤️
 		]]
 		embed[2].description = ""
 
@@ -411,6 +412,14 @@ local function Embed(message,client) -- messageCreate event
 	if not message.guild then return end
 	if message.author.bot then return end
 
+	for id,reaction in pairs(reactionUrl) do
+		if reaction.message.guild.id == message.guild.id and reaction.message.channel.id == message.channel.id then
+			reaction.message:removeReaction("embed:"..emojis.reaction,client.user.id)
+			reactionUrl[id] = nil
+			break
+		end
+	end
+
 	if message.content:match("<http") or message.content:match("||") then return end
 
 	local links = ExtractLinks(message.content)
@@ -420,13 +429,13 @@ local function Embed(message,client) -- messageCreate event
 				if not reactionNeeded then
 					Tweet(message,link)
 				else
-					message:addReaction("embed:"..reactionEmoji)
+					message:addReaction("embed:"..emojis.reaction)
 
-					reactionUrl[message.id] = link
+					reactionUrl[message.id] = {message=message,link=link}
 					timer.sleep(10000)
 					if reactionUrl[message.id] then
 						reactionUrl[message.id] = nil
-						message:removeReaction("embed:"..reactionEmoji,client.user.id)
+						message:removeReaction("embed:"..emojis.reaction,client.user.id)
 					end
 				end
 			else
@@ -521,20 +530,20 @@ local function CreateEmbed(reaction,userId,client) -- reactionAdd event
 
 	if not reaction.message.guild then return end
 
-	if reaction.emojiId ~= reactionEmoji then return end
+	if reaction.emojiId ~= emojis.reaction then return end
 
 	if userId == client.user.id then return end
 	if userId ~= reaction.message.author.id and userId ~= Config.OwnerID then
-		reaction.message:removeReaction("embed:"..reactionEmoji,userId)
+		reaction.message:removeReaction("embed:"..emojis.reaction,userId)
 		return
 	end
 
 	if not reactionUrl[reaction.message.id] then return end
 
-	local link = reactionUrl[reaction.message.id]
+	local link = reactionUrl[reaction.message.id].link
 	reactionUrl[reaction.message.id] = nil
-	reaction.message:removeReaction("embed:"..reactionEmoji,client.user.id)
-	reaction.message:removeReaction("embed:"..reactionEmoji,userId)
+	reaction.message:removeReaction("embed:"..emojis.reaction,client.user.id)
+	reaction.message:removeReaction("embed:"..emojis.reaction,userId)
 	Tweet(reaction.message,link)
 end
 
