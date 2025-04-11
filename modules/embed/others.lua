@@ -47,7 +47,7 @@ local Fix = {
 		if not string.match(link,"/reel/") and not string.match(link,"/p/") then return 1 end
 
 		if link:match("?") then link = link:match("(.*?)"):gsub("?","") end
-		link = link:gsub("instagram","ddinstagram") -- Alternatives: xnstagram.com
+		link = link:gsub("instagram","instagramez") -- Alternatives: xnstagram.com, ddinstagram.com (none of them are working)
 
 		FixLink(message,link) return 1
 	end,
