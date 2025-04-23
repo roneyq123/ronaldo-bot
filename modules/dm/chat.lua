@@ -69,6 +69,9 @@ local function SetReply(message,client)
 		reply = nil timer.sleep(5000) response.delete(response)
 	end
 
+	-- Setting the channel as well
+	channel = reply.channel
+
 	-- Feedback that everything is good
 	local response = message.channel:send{content="Replying to message: "..reply.link,reference={message=message,mention=false}}
 	timer.sleep(5000) response.delete(response)
