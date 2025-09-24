@@ -42,7 +42,7 @@ local function FixLink(message,link)
 end
 
 local Fix = {
-	Instagram = function(message,link)
+	--[[Instagram = function(message,link)
 		if not (string.match(link,"://instagram%.com/") or string.match(link,"%.instagram%.com/")) then return 0 end
 		if not string.match(link,"/reel/") and not string.match(link,"/p/") then return 1 end
 
@@ -50,7 +50,7 @@ local Fix = {
 		link = link:gsub("instagram","instagramez") -- Alternatives: xnstagram.com, ddinstagram.com (none of them are working)
 
 		FixLink(message,link) return 1
-	end,
+	end,]]
 
 	TikTok = function(message,link)
 		if not (string.match(link,"://tiktok%.com/") or string.match(link,"%.tiktok%.com/")) then return 0 end
@@ -176,3 +176,4 @@ local functions = {
 local tableReturn = {}
 for eventName,events in pairs(functions) do tableReturn[eventName] = events end
 return tableReturn
+
