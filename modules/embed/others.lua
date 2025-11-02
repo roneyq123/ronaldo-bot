@@ -58,6 +58,7 @@ local Fix = {
 
 		if link:match("?") then link = link:match("(.*?)"):gsub("?","") end
 		link = link:gsub("tiktok.com","tfxktok.com") -- Alternatives: vxtiktok.com, tiktxk.com
+		link = link:gsub("//vt","//vm") -- Change the 'vt' subdomain to 'vm' to work with tfxktok
 
 		FixLink(message,link) return 1
 	end,
@@ -176,4 +177,5 @@ local functions = {
 local tableReturn = {}
 for eventName,events in pairs(functions) do tableReturn[eventName] = events end
 return tableReturn
+
 
