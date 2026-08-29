@@ -47,7 +47,7 @@ local Fix = {
 		if not string.match(link,"/reel/") and not string.match(link,"/p/") then return 1 end
 
 		if link:match("?") then link = link:match("(.*?)"):gsub("?","") end
-		link = link:gsub("instagram.com","adamlikes.men") -- Yes, this is a real InstaFix domain --- Alternatives: xnstagram.com, ddinstagram.com, instagramez.com (none of them are working)
+		link = link:gsub("instagram.com","ins.so")
 
 		FixLink(message,link) return 1
 	end,
