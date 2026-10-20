@@ -5,3 +5,4 @@ Config file:
 <br>`OwnerID` - the Discord ID of the owner of the bot
 <br>`AboutMessage` - the message that appears when a user mentions the bot with an empty message
 <br>`UserAgent` - the User-Agent that the bot will use when doing requests
+<br>`Domains` - the domains the bot will use to replace the original ones

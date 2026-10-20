@@ -47,7 +47,7 @@ local Fix = {
 		if not string.match(link,"/reel/") and not string.match(link,"/p/") then return 1 end
 
 		if link:match("?") then link = link:match("(.*?)"):gsub("?","") end
-		link = link:gsub("instagram.com","ins.so")
+		link = link:gsub("instagram.com",Config.Domains.Instagram)
 
 		FixLink(message,link) return 1
 	end,
@@ -57,7 +57,7 @@ local Fix = {
 		if not string.match(link,"/video/") and not string.match(link,"vm%.tiktok") then return 1 end
 
 		if link:match("?") then link = link:match("(.*?)"):gsub("?","") end
-		link = link:gsub("tiktok.com","tfxktok.com") -- Alternatives: vxtiktok.com, tiktxk.com
+		link = link:gsub("tiktok.com",Config.Domains.TikTok)
 		link = link:gsub("//vt","//vm") -- Change the 'vt' subdomain to 'vm' to work with tfxktok
 
 		FixLink(message,link) return 1
@@ -68,7 +68,7 @@ local Fix = {
 		if not string.match(link,"/comments/") and not string.match(link,"/s/") then return 1 end
 
 		if link:match("?") then link = link:match("(.*?)"):gsub("?","") end
-		link = link:gsub("reddit.com","rxddit.com") -- Alternatives: rxyddit.com
+		link = link:gsub("reddit.com",Config.Domains.Reddit)
 
 		FixLink(message,link) return 1
 	end,

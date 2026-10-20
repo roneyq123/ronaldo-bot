@@ -2,5 +2,11 @@
     "BotToken": "",
     "OwnerID": "",
     "AboutMessage": "",
-    "UserAgent": ""
+    "UserAgent": "",
+
+    "Domains": {
+        "Instagram": "",
+        "TikTok": "",
+        "Reddit": ""
+    }
 }
