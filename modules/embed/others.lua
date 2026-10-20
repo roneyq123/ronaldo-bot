@@ -104,6 +104,25 @@ local function Embed(message,client) -- messageCreate event
 	end
 end
 
+local function ChangeDomainTemporarily(message,client) -- messageCreate event
+	if not message.guild then return end
+	if message.author.bot then return end
+
+	if message.author.id ~= Config.OwnerID then return end
+
+	if not message.content:match("<@"..client.user.id.."> change domain ") then return end
+
+	local tbl = {}
+	for i in message.content:gmatch("([^ ]+)") do table.insert(tbl,i) end
+
+	if not tbl[4] or not Config.Domains[tbl[4]] or not tbl[5] then
+		message.channel:send{ content = "👎" } return
+	end
+
+	Config.Domains[tbl[4]] = tbl[5]
+	message.channel:send{ content = "👍" }
+end
+
 local function UserMessageDeleted(message,client) -- messageDelete event
 	if not message.guild then return end
 	if message.author.bot then return end
@@ -169,7 +188,7 @@ end
 -----------------------
 
 local functions = {
-	messageCreate = {Embed},
+	messageCreate = {Embed,ChangeDomainTemporarily},
 	messageDelete = {UserMessageDeleted,BotMessageDeleted},
 	reactionAdd = {DeleteUsingReaction},
 }
